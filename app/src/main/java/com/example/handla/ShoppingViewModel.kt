@@ -12,6 +12,7 @@ data class ShoppingUiState(
 )
 
 class ShoppingViewModel : ViewModel(){
+    private var nextId = 1
     var uiState by mutableStateOf(ShoppingUiState())
         private set
 
@@ -21,5 +22,19 @@ class ShoppingViewModel : ViewModel(){
 
     fun updateCategory(category: String){
         uiState = uiState.copy(selectedCategory = category)
+    }
+
+    fun addItem(){
+        if (uiState.newItemName.isBlank()) return
+
+        val newItem = ShoppingItem(
+            name = uiState.newItemName.trim(),
+            id = nextId++,
+            category = uiState.selectedCategory
+        )
+        uiState = uiState.copy(
+            items = listOf(newItem) + uiState.items,
+            newItemName = ""
+        )
     }
 }
