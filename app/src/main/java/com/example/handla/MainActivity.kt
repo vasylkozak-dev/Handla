@@ -87,19 +87,23 @@ fun ShoppingScreen(
         onCategoryChange = { viewModel.updateCategory(it) },
         onAddItem = { viewModel.addItem()}
     )
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(
-                    items = uiState.items,
-                    key = {it.id}
-                ) { item ->
-                    ShoppingItemRow(
-                        item = item,
-                        onToggleBought = { viewModel.toggleItemBought(it) },
-                        onDeleteItem = { viewModel.deleteItem(it) },
-                        onEdit = { editingItem = it }
-                    )
+    if (uiState.items.isEmpty()) {
+        Text("Listan är tom")
+    } else {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(
+                items = uiState.items,
+                key = { it.id }
+            ) { item ->
+                ShoppingItemRow(
+                    item = item,
+                    onToggleBought = { viewModel.toggleItemBought(it) },
+                    onDeleteItem = { viewModel.deleteItem(it) },
+                    onEdit = { editingItem = it }
+                )
 
-                }
+            }
+        }
     }
 
         }
