@@ -61,4 +61,23 @@ class ShoppingViewModel : ViewModel(){
             items = updatedItems
         )
     }
+
+    fun editItem(
+        id: Int,
+        newName: String,
+        newCategory: String
+    ) {
+        if (newName.isBlank()) return
+        val updatedItems = uiState.items.map {
+            item ->
+            if (item.id == id){
+                item.copy(name = newName, category = newCategory)
+            } else {
+                item
+            }
+        }
+        uiState = uiState.copy(
+            items = updatedItems
+        )
+    }
 }

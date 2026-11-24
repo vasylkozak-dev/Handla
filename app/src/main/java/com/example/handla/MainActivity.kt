@@ -71,7 +71,8 @@ fun ShoppingScreen(
                     ShoppingItemRow(
                         item = item,
                         onToggleBought = { viewModel.toggleItemBought(it) },
-                        onDeleteItem = { viewModel.deleteItem(it) }
+                        onDeleteItem = { viewModel.deleteItem(it) },
+                        onEdit = { viewModel.editItem(it.id, it.name, it.category) }
                     )
 
                 }

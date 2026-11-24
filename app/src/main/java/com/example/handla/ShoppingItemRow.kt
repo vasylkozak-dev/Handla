@@ -1,5 +1,6 @@
 package com.example.handla
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,7 +19,8 @@ import androidx.compose.ui.unit.sp
 fun ShoppingItemRow(
     item: ShoppingItem,
     onToggleBought: (Int) -> Unit,
-    onDeleteItem: (Int) -> Unit
+    onDeleteItem: (Int) -> Unit,
+    onEdit: (ShoppingItem) -> Unit
 ){
     Row (
         modifier = Modifier.fillMaxWidth(),
@@ -29,7 +31,9 @@ fun ShoppingItemRow(
             onCheckedChange = { onToggleBought(item.id) }
         )
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .clickable(onClick = { onEdit(item) })
         ) {
         Text(text = item.name, fontWeight = FontWeight.Bold)
         Text(text = item.category)
