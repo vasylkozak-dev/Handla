@@ -7,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -61,6 +63,15 @@ fun ShoppingScreen(
         onCategoryChange = { viewModel.updateCategory(it) },
         onAddItem = { viewModel.addItem()}
     )
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(
+                    items = uiState.items,
+                    key = {it.id}
+                ) { item ->
+                    ShoppingItemRow(item = item)
+                }
+    }
+
         }
     }
 }
