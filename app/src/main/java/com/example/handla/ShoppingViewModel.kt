@@ -37,4 +37,28 @@ class ShoppingViewModel : ViewModel(){
             newItemName = ""
         )
     }
+    fun toggleItemBought(
+        id: Int
+    ){
+        val updatedItems = uiState.items.map {
+            item ->
+            if (item.id == id){
+                item.copy(isBought = !item.isBought)
+            } else {
+                item
+            }
+        }
+        uiState = uiState.copy(
+            items = updatedItems
+        )
+    }
+
+    fun deleteItem(id: Int) {
+        val updatedItems = uiState.items.filter { item ->
+            item.id != id
+        }
+        uiState = uiState.copy(
+            items = updatedItems
+        )
+    }
 }

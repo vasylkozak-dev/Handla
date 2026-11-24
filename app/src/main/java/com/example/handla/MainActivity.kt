@@ -68,7 +68,12 @@ fun ShoppingScreen(
                     items = uiState.items,
                     key = {it.id}
                 ) { item ->
-                    ShoppingItemRow(item = item)
+                    ShoppingItemRow(
+                        item = item,
+                        onToggleBought = { viewModel.toggleItemBought(it) },
+                        onDeleteItem = { viewModel.deleteItem(it) }
+                    )
+
                 }
     }
 
