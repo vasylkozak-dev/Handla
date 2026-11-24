@@ -16,6 +16,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+var categories = listOf(
+    "Mat", "Dryck", "Hushåll", "Hygien", "Övrigt"
+)
 @Composable
 fun AddItemSection(
     uiState: ShoppingUiState,
@@ -25,9 +28,7 @@ fun AddItemSection(
     onAddItem: () -> Unit
 ){
     var expanded by remember { mutableStateOf(false) }
-    var categories = listOf(
-        "Mat", "Dryck", "Hushåll", "Hygien", "Övrigt"
-    )
+
 
     Column(
         modifier = Modifier.padding(16.dp),

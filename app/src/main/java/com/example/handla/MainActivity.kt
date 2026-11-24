@@ -12,6 +12,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.handla.ui.theme.HandlaTheme
@@ -50,6 +54,9 @@ fun ShoppingScreen(
     viewModel: ShoppingViewModel = viewModel()
 ) {
     val uiState = viewModel.uiState
+    var editingItem by remember {
+        mutableStateOf<ShoppingItem?>(null)
+    }
 
     Scaffold { innerPadding ->
         Column(
@@ -72,12 +79,22 @@ fun ShoppingScreen(
                         item = item,
                         onToggleBought = { viewModel.toggleItemBought(it) },
                         onDeleteItem = { viewModel.deleteItem(it) },
-                        onEdit = { viewModel.editItem(it.id, it.name, it.category) }
+                        onEdit = { editingItem = it }
                     )
 
                 }
     }
 
+        }
+        editingItem?.let { item ->
+            EditItemDialog(
+                item = item,
+                onDismiss = { editingItem = null },
+                onSave = { id, newName, newCategory ->
+                    viewModel.editItem(id, newName, newCategory)
+                    editingItem = null
+                }
+            )
         }
     }
 }
