@@ -13,58 +13,123 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditItemDialog(
     item: ShoppingItem,
     onDismiss: () -> Unit,
-    onSave: (Int, String, String) -> Unit
+    onSave: (Int, String, String) -> Unit,
+    onDelete: (Int) -> Unit
 ) {
     var editedName by remember { mutableStateOf(item.name) }
     var editedCategory by remember { mutableStateOf(item.category) }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    var showSaveDialog by remember { mutableStateOf(false) }
 
-    AlertDialog(
-        onDismissRequest = { onDismiss() },
-        title = {
+    val hasChanges = editedName != item.name ||
+            editedCategory != item.category
+
+
+    ModalBottomSheet(
+        onDismissRequest = {
+            if (hasChanges) {
+                showSaveDialog = true
+            } else {
+                onDismiss
+            }
+        }
+    ) {
+        LaunchedEffect(Unit) {
+            delay(500)
+            focusRequester.requestFocus()
+            delay(200)
+            keyboardController?.show()
+        }
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
             Text("Redigera vara")
-        },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = editedName,
-                    onValueChange = { editedName = it },
-                    label = { Text("Varans namn") }
-                )
-                FlowRow{
-                    categories.forEach { category ->
-                        FilterChip(
-                            selected = editedCategory == category,
-                            onClick = { editedCategory = category },
-                            label = { Text(category) }
-                        )
 
-                    }
+            OutlinedTextField(
+                value = editedName,
+                onValueChange = { editedName = it },
+                label = { Text("Varans namn") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
+                singleLine = true
+            )
+
+            FlowRow {
+                categories.forEach { category ->
+                    FilterChip(
+                        selected = editedCategory == category,
+                        onClick = { editedCategory = category },
+                        label = { Text(category) }
+                    )
                 }
             }
-
-        },
-        confirmButton = {
             TextButton(
-                onClick = { onSave(item.id, editedName, editedCategory) },
+                onClick = {
+                    onDelete(item.id)
+                },
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colorScheme.error
+                )
+            ) {
+                Text("Ta bort")
+            }
+
+            TextButton(
+                onClick = {
+                    onSave(item.id, editedName, editedCategory)
+                },
                 enabled = editedName.isNotBlank()
             ) {
                 Text("Spara")
             }
-
-        },
-        dismissButton = {
-            TextButton(
-                onClick = { onDismiss() }
-            ) {
-                Text("Avbryt")
-            }
-
         }
-    )
+    }
+    if (showSaveDialog) {
+        AlertDialog(
+            onDismissRequest = { showSaveDialog = false },
+            title = { Text("Spara ändringar?") },
+            text = { Text("Du har osparade ändringar") },
+
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onSave(item.id, editedName, editedCategory)
+                    },
+                    enabled = editedName.isNotBlank()
+                ) {
+                    Text("Spara")
+                }
+            },
+
+            dismissButton = {
+                TextButton(
+                    onClick = { onDismiss() }
+                ) {
+                    Text("Spara inte")
+                }
+            }
+        )
+    }
 
 }

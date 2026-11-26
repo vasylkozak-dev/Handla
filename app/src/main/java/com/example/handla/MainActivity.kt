@@ -74,19 +74,22 @@ fun ShoppingScreen(
                    )
                }
             )
+        },
+        bottomBar = {
+            AddItemSection(
+                uiState = uiState,
+                onNameChange = { viewModel.updateItemName(it) },
+                selectedCategory = uiState.selectedCategory,
+                onCategoryChange = { viewModel.updateCategory(it) },
+                onAddItem = { viewModel.addItem()}
+            )
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
 
-    AddItemSection(
-        uiState = uiState,
-        onNameChange = { viewModel.updateItemName(it) },
-        selectedCategory = uiState.selectedCategory,
-        onCategoryChange = { viewModel.updateCategory(it) },
-        onAddItem = { viewModel.addItem()}
-    )
+
     if (uiState.items.isEmpty()) {
         Text("Listan är tom")
     } else {
@@ -98,7 +101,6 @@ fun ShoppingScreen(
                 ShoppingItemRow(
                     item = item,
                     onToggleBought = { viewModel.toggleItemBought(it) },
-                    onDeleteItem = { viewModel.deleteItem(it) },
                     onEdit = { editingItem = it }
                 )
 
@@ -113,6 +115,10 @@ fun ShoppingScreen(
                 onDismiss = { editingItem = null },
                 onSave = { id, newName, newCategory ->
                     viewModel.editItem(id, newName, newCategory)
+                    editingItem = null
+                },
+                        onDelete = { id ->
+                    viewModel.deleteItem(id)
                     editingItem = null
                 }
             )
