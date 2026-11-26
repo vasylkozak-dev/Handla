@@ -1,5 +1,7 @@
 package com.example.handla
 
+import android.R.attr.category
+import android.R.attr.text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -19,8 +21,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.ui.Alignment
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.imePadding
 
 var categories = listOf(
     "Mat", "Dryck", "Hushåll", "Hygien", "Övrigt"
@@ -37,31 +48,59 @@ fun AddItemSection(
 
 
     Column(
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier
+            .padding(16.dp)
+            .imePadding(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
-    OutlinedTextField(
-        value = uiState.newItemName,
-        onValueChange = onNameChange,
-        label = { Text("Varans namn") }
-    )
-    Button(onClick = {expanded = true}) {
-        Text(selectedCategory)
-    }
-    DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                modifier = Modifier.weight(1f),
+                value = uiState.newItemName,
+                onValueChange = onNameChange,
+                singleLine = true,
+                shape = RoundedCornerShape(25.dp),
+                colors = TextFieldDefaults.colors(
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+                ),
+                placeholder = { Text("Ny vara...") }
+
+            )
+            Button(
+                modifier = Modifier.size(56.dp),
+                onClick = onAddItem,
+                enabled = uiState.newItemName.isNotBlank(),
+                shape = CircleShape)
+            {
+                Text(text = "+", fontSize = 25.sp, textAlign = TextAlign.Center)
+            }
+        }
+
+
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(9.dp)
+    ) {
         categories.forEach { category ->
-            DropdownMenuItem(
-                text = { Text(category) },
-                onClick = {
-                    onCategoryChange(category)
-                    expanded = false
-                }
+            FilterChip(
+                border = null,
+                shape = CircleShape,
+                colors = FilterChipDefaults.filterChipColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    selectedContainerColor = MaterialTheme.colorScheme.primary,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                ),
+                selected = selectedCategory == category,
+                onClick = { onCategoryChange(category) },
+                label = { Text(category) }
             )
         }
     }
-    Button(onClick = onAddItem, enabled = uiState.newItemName.isNotBlank()) {
-        Text("Lägg till")
     }
+
     }
-}
